@@ -7,7 +7,7 @@
  *
  */
 import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene, DormScene } from 'scenes';
 
 // Initialize core ThreeJS components
@@ -19,6 +19,7 @@ const renderer = new WebGLRenderer({ antialias: true });
 // Set up camera
 camera.position.set(6, 3, -10);
 camera.lookAt(new Vector3(0, 0, 0));
+var focus = new Vector3(0, 0, 0);
 
 // STUDENT CODE: Take a point in local DOM coordinates and convert it to world coordinates
 // Adapted from concept discussed here: https://discourse.threejs.org/t/project-a-2d-screen-point-to-3d-world-point/5713
@@ -37,7 +38,7 @@ function DOMToWorld(clientX, clientY) {
     return pos;
 }
 
-// STUDENT CODE (BUGGY, NOT WORKING): Update camera position based on key input
+// STUDENT CODE: Update camera position based on key input
 // Add event listener for key presses
 window.addEventListener(
     "keydown",
@@ -53,34 +54,38 @@ function handleKeydown(event) {
         ArrowDown: new Vector3(0, 0, -1),
         ArrowLeft: new Vector3(1, 0, 0),
         ArrowRight: new Vector3(-1, 0, 0),
-        " ": new Vector3(0, 1, 0)
+        " ": new Vector3(0, 1, 0),
+        Shift: new Vector3(0, -1, 0)
     }
     // Scale to adjust movement vectors by
     const scale = 1;
 
-    // If the arrow keys are pressed, move the camera in the correct direction
-    if (event.key == "ArrowUp" || event.key == "ArrowDown" || event.key == "ArrowLeft" || event.key == "ArrowRight" || event.key == " ") {
+    // If an arrow key, space bar, or shift key is pressed, move the camera in the correct direction
+    if (event.key == "ArrowUp" || event.key == "ArrowDown" || event.key == "ArrowLeft" || event.key == "ArrowRight" || event.key == " " || event.key == "Shift") {
         let newCameraPos = camera.position.clone().add(moveMap[event.key].clone().multiplyScalar(scale));
         camera.position.set(newCameraPos.x, newCameraPos.y, newCameraPos.z);
+        focus.add(moveMap[event.key].clone().multiplyScalar(scale));
+        camera.lookAt(focus);
+        camera.updateProjectionMatrix();
     }
 }
 // END STUDENT CODE
 
 // STUDENT CODE (BUGGY, NOT WORKING): UPDATE CAMERA LOOK AT BASED ON MOUSE MOVEMENT
 // Add event listener for key presses
-window.addEventListener(
-    "mousemove",
-    handleMouseMove
-);
+// window.addEventListener(
+//     "mousemove",
+//     handleMouseMove
+// );
 
-// Function for handling mouse movements
-function handleMouseMove(event) {
+// // Function for handling mouse movements
+// function handleMouseMove(event) {
 
-    let currFocus = new Vector3();
-    camera.getWorldDirection(currFocus);
-    let worldPoint = DOMToWorld(event.clientX, event.clientY);
-    // camera.lookAt(worldPoint);
-}
+//     let worldPoint = DOMToWorld(event.clientX, event.clientY);
+//     camera.lookAt(worldPoint);
+//     camera.updateProjectionMatrix();
+//     camera.getWorldDirection(focus);
+// }
 // END STUDENT CODE
 
 // Set up renderer, canvas, and minor CSS adjustments
@@ -92,16 +97,16 @@ document.body.style.overflow = 'hidden'; // Fix scrolling
 document.body.appendChild(canvas);
 
 // Set up controls
-const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
-controls.enablePan = false;
-controls.minDistance = 4;
-controls.maxDistance = 16;
-controls.update();
+// const controls = new OrbitControls(camera, canvas);
+// controls.enableDamping = true;
+// controls.enablePan = false;
+// controls.minDistance = 4;
+// controls.maxDistance = 16;
+// controls.update();
 
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
-    controls.update();
+    // controls.update();
     renderer.render(scene, camera);
     scene.update && scene.update(timeStamp);
     window.requestAnimationFrame(onAnimationFrameHandler);
