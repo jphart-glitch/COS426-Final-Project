@@ -8,16 +8,80 @@
  */
 import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { SeedScene } from 'scenes';
+import { SeedScene, DormScene } from 'scenes';
 
 // Initialize core ThreeJS components
-const scene = new SeedScene();
+// EDITED: To make "normal" again, replace DormScene() with SeedScene()
+const scene = new DormScene();
 const camera = new PerspectiveCamera();
 const renderer = new WebGLRenderer({ antialias: true });
 
 // Set up camera
 camera.position.set(6, 3, -10);
 camera.lookAt(new Vector3(0, 0, 0));
+
+// STUDENT CODE: Take a point in local DOM coordinates and convert it to world coordinates
+// Adapted from concept discussed here: https://discourse.threejs.org/t/project-a-2d-screen-point-to-3d-world-point/5713
+function DOMToWorld(clientX, clientY) {
+    let vec = new Vector3();
+    // Convert from local DOM coordinates to NDC coordinates
+    vec.set((clientX / window.innerWidth) * 2 - 1, - (clientY / window.innerHeight) * 2 + 1, 0.5);
+    // Convert from NDC coordinates to world coordinates
+    vec.unproject(camera);
+    // Get the direction vector to the world coord point from the camera
+    vec.sub(camera.position).normalize();
+    // Calculate how far to travel along the direction vector
+    let distance = camera.position.z - vec.z;
+    // Calculate the position that lies on the direction vector and is at correct z level
+    let pos = camera.position.clone().add(vec.multiplyScalar(distance));
+    return pos;
+}
+
+// STUDENT CODE (BUGGY, NOT WORKING): Update camera position based on key input
+// Add event listener for key presses
+window.addEventListener(
+    "keydown",
+    handleKeydown
+);
+
+// Function for handling key presses
+function handleKeydown(event) {
+
+    // Mapping of camera movement vectors
+    const moveMap = {
+        ArrowUp: new Vector3(0, 0, 1),
+        ArrowDown: new Vector3(0, 0, -1),
+        ArrowLeft: new Vector3(1, 0, 0),
+        ArrowRight: new Vector3(-1, 0, 0),
+        " ": new Vector3(0, 1, 0)
+    }
+    // Scale to adjust movement vectors by
+    const scale = 1;
+
+    // If the arrow keys are pressed, move the camera in the correct direction
+    if (event.key == "ArrowUp" || event.key == "ArrowDown" || event.key == "ArrowLeft" || event.key == "ArrowRight" || event.key == " ") {
+        let newCameraPos = camera.position.clone().add(moveMap[event.key].clone().multiplyScalar(scale));
+        camera.position.set(newCameraPos.x, newCameraPos.y, newCameraPos.z);
+    }
+}
+// END STUDENT CODE
+
+// STUDENT CODE (BUGGY, NOT WORKING): UPDATE CAMERA LOOK AT BASED ON MOUSE MOVEMENT
+// Add event listener for key presses
+window.addEventListener(
+    "mousemove",
+    handleMouseMove
+);
+
+// Function for handling mouse movements
+function handleMouseMove(event) {
+
+    let currFocus = new Vector3();
+    camera.getWorldDirection(currFocus);
+    let worldPoint = DOMToWorld(event.clientX, event.clientY);
+    // camera.lookAt(worldPoint);
+}
+// END STUDENT CODE
 
 // Set up renderer, canvas, and minor CSS adjustments
 renderer.setPixelRatio(window.devicePixelRatio);
