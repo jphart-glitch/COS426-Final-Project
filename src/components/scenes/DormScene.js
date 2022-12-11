@@ -32,16 +32,15 @@ class DormScene extends Scene {
         this.state.updateList.push(object);
     }
 
-    // NOT STUDENT CODE; COMMENTED OUT TO STOP SCENE ROTATION
-    // update(timeStamp) {
-    //     const { rotationSpeed, updateList } = this.state;
-    //     this.rotation.y = (rotationSpeed * timeStamp) / 10000;
+    update(timeStamp) {
+        const { rotationSpeed, updateList } = this.state;
+        this.rotation.y = (rotationSpeed * timeStamp) / 10000;
 
-    //     // Call update for each object in the updateList
-    //     for (const obj of updateList) {
-    //         obj.update(timeStamp);
-    //     }
-    // }
+        // Call update for each object in the updateList
+        for (const obj of updateList) {
+            obj.update(timeStamp);
+        }
+    }
 }
 
 export default DormScene;

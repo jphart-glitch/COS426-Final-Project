@@ -7,19 +7,19 @@
  *
  */
 import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
+import { default as Player } from './components/camera/Player.js';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene, DormScene } from 'scenes';
 
 // Initialize core ThreeJS components
 // EDITED: To make "normal" again, replace DormScene() with SeedScene()
 const scene = new DormScene();
-const camera = new PerspectiveCamera();
+const camera = new Player();
 const renderer = new WebGLRenderer({ antialias: true });
 
 // Set up camera
-camera.position.set(6, 3, -10);
+camera.updatePos(6, 3, -10);
 camera.lookAt(new Vector3(0, 0, 0));
-var focus = new Vector3(0, 0, 0);
 
 // STUDENT CODE: Take a point in local DOM coordinates and convert it to world coordinates
 // Adapted from concept discussed here: https://discourse.threejs.org/t/project-a-2d-screen-point-to-3d-world-point/5713
@@ -45,7 +45,10 @@ window.addEventListener(
     handleKeydown
 );
 
-// Function for handling key presses
+// Functions for handling key presses
+var keyPressed = {};
+
+// Handle pressing the key
 function handleKeydown(event) {
 
     // Mapping of camera movement vectors
@@ -56,17 +59,41 @@ function handleKeydown(event) {
         ArrowRight: new Vector3(-1, 0, 0),
         " ": new Vector3(0, 1, 0),
         Shift: new Vector3(0, -1, 0)
-    }
+    };
     // Scale to adjust movement vectors by
     const scale = 1;
 
     // If an arrow key, space bar, or shift key is pressed, move the camera in the correct direction
     if (event.key == "ArrowUp" || event.key == "ArrowDown" || event.key == "ArrowLeft" || event.key == "ArrowRight" || event.key == " " || event.key == "Shift") {
         let newCameraPos = camera.position.clone().add(moveMap[event.key].clone().multiplyScalar(scale));
-        camera.position.set(newCameraPos.x, newCameraPos.y, newCameraPos.z);
-        focus.add(moveMap[event.key].clone().multiplyScalar(scale));
-        camera.lookAt(focus);
-        camera.updateProjectionMatrix();
+        camera.updatePos(newCameraPos.x, newCameraPos.y, newCameraPos.z);
+        camera.lookingAt.add(moveMap[event.key].clone().multiplyScalar(scale));
+        camera.lookAt(camera.lookingAt);
+    }
+}
+
+// Handle letting go of the key
+function handleKeyup(event) {
+
+    // Mapping of camera movement vectors
+    const moveMap = {
+        ArrowUp: new Vector3(0, 0, 1),
+        ArrowDown: new Vector3(0, 0, -1),
+        ArrowLeft: new Vector3(1, 0, 0),
+        ArrowRight: new Vector3(-1, 0, 0),
+        " ": new Vector3(0, 1, 0),
+        Shift: new Vector3(0, -1, 0)
+    };
+
+    // Scale to adjust movement vectors by
+    const scale = 1;
+
+    // If an arrow key, space bar, or shift key is pressed, move the camera in the correct direction
+    if (event.key == "ArrowUp" || event.key == "ArrowDown" || event.key == "ArrowLeft" || event.key == "ArrowRight" || event.key == " " || event.key == "Shift") {
+        let newCameraPos = camera.position.clone().add(moveMap[event.key].clone().multiplyScalar(scale));
+        camera.updatePos(newCameraPos.x, newCameraPos.y, newCameraPos.z);
+        camera.lookingAt.add(moveMap[event.key].clone().multiplyScalar(scale));
+        camera.lookAt(camera.lookingAt);
     }
 }
 // END STUDENT CODE
@@ -105,11 +132,13 @@ document.body.appendChild(canvas);
 // controls.update();
 
 // Render loop
+var prevTime = 0;
 const onAnimationFrameHandler = (timeStamp) => {
     // controls.update();
     renderer.render(scene, camera);
     scene.update && scene.update(timeStamp);
     window.requestAnimationFrame(onAnimationFrameHandler);
+    prevTime = timeStamp;
 };
 window.requestAnimationFrame(onAnimationFrameHandler);
 
