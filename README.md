@@ -70,5 +70,8 @@ Both models were downloaded from the Google Poly project:
 
 This skeleton project was adapted from [edwinwebb's ThreeJS seed project](https://github.com/edwinwebb/three-seed]) by Reilly Bova ’20.
 
+Player movements and camera control was heavily inspired from the following first-person controls demo:
+https://codepen.io/olchyk98/pen/NLBVoW
+
 ## License
 [MIT](./LICENSE)
