@@ -29,9 +29,12 @@ export default class Player extends PerspectiveCamera {
         const scale = dist/ (Math.min(clientWidth, clientHeight) / 2);
         const turnSpeed = 0.00005 * scale;
 
-        // Adjust rotation 
+        // Adjust rotations
         this.rotation.y += ((point.x - midpoint.x) * turnSpeed);
         this.rotation.x += ((point.y - midpoint.y) * turnSpeed);
+        // Clamp y rotation to range [-Math.PI, Math.PI]
+        this.rotation.y = Math.max(-Math.PI, this.rotation.y);
+        this.rotation.y = Math.min(this.rotation.y, Math.PI);
 
         // TODO: Make sure x and y rotation stays within acceptable interval
     }

@@ -23,6 +23,35 @@ document.body.style.margin = 0; // Removes margin around page
 document.body.style.overflow = 'hidden'; // Fix scrolling
 document.body.appendChild(canvas);
 
+// Add pause menu and its CSS adjustments
+const overlay = document.createElement('div');
+const text = document.createElement('h1');
+
+// If I could just do this, it would get rid of the ugly mess below
+// overlay.setAttribute('class', 'pause-menu-text');
+text.style.position = 'absolute';
+text.style.top = '50%';
+text.style.left = '50%';
+text.style.fontSize = '50px';
+text.style.color = 'white';
+text.style.transform = 'translate(-50%,-50%)';
+text.appendChild(document.createTextNode("Paused"));
+overlay.appendChild(text);
+// If I could just do this, it would get rid of the ugly mess below
+// overlay.setAttribute('class', 'pause-menu');
+overlay.style.position = 'fixed';
+overlay.style.display = 'none';
+overlay.style.width = '100%';
+overlay.style.height = '100%';
+overlay.style.top = '0';
+overlay.style.left = '0';
+overlay.style.right = '0';
+overlay.style.bottom = '0';
+overlay.style.backgroundColor = 'rgba(0,0,0,0.5)';
+overlay.style.zIndex = '2';
+overlay.style.cursor = 'pointer';
+document.body.appendChild(overlay);
+
 // Set up camera
 camera.position.set(6, 3, -10);
 camera.lookAt(new Vector3(0, 0, 0));
@@ -45,6 +74,10 @@ window.addEventListener(
 
 // Handle mouse movement (looking around the scene)
 function handleMouseMove(event) {
+
+    // If game is paused, do nothing further
+    if (keyPressed["Escape"]) return;
+
     let point = new Vector2(event.clientX, event.clientY);
     camera.handleLook(point, canvas.width, canvas.height);
 }
@@ -59,11 +92,30 @@ var keyPressed = {
         "1": false,
         "2": false
     },
-    " ": false
+    " ": false,
+    Escape: false
 };
 
 // Handle pressing the key
 function handleKeydown(event) {
+
+    // If escape is pressed, pause game and bring up pause screen
+    if (event.key == "Escape") {
+        if (keyPressed[event.key]) {
+            overlay.style.display = 'none';
+            // If crouched, uncrouch upon exiting pause menu
+            if (keyPressed["Shift"[1]]) camera.handleCrouch();
+            // Switch to uncrouched/not sprinting state
+            keyPressed["Shift"[1]] = false;
+            keyPressed["Shift"[2]] = false;
+
+        }
+        else overlay.style.display = 'block';
+        keyPressed[event.key] = !keyPressed[event.key];
+    }
+
+    // If game is paused, do nothing further
+    if (keyPressed["Escape"]) return;
 
     // If an arrow key, switch state of that keyPressed value
     if (event.key == "ArrowUp" || event.key == "ArrowDown" || event.key == "ArrowLeft" || event.key == "ArrowRight" || event.key == " ") {
@@ -91,10 +143,15 @@ function handleKeydown(event) {
 // Handle letting go of the key
 function handleKeyup(event) {
 
-    // If an arrow key, space bar, or shift key is pressed, move the camera in the correct direction
+    // If game is paused, do nothing further
+    if (keyPressed["Escape"]) return;
+
+    // If an arrow key or space bar is pressed, switch state of that keyPressed value
     if (event.key == "ArrowUp" || event.key == "ArrowDown" || event.key == "ArrowLeft" || event.key == "ArrowRight" || event.key == " ") {
         keyPressed[event.key] = false;
     }
+
+    // If a shift key, 
     if (event.key == "Shift") {
         keyPressed[event.key[event.location]] = false;
         // If the left shift key, make the camera handle crouching
@@ -104,6 +161,9 @@ function handleKeyup(event) {
 
 // Handle movement using verlet integration
 function movePlayer() {
+
+    // If game is paused, do nothing further
+    if (keyPressed["Escape"]) return;
 
     // Scale to adjust lateral movement by
     let speed = 0.1;
@@ -140,6 +200,10 @@ function movePlayer() {
 
 // Calls relevant handler function for any collisions
 function handleCollisions() {
+
+    // If game is paused, do nothing further
+    if (keyPressed["Escape"]) return;
+
     scene.traverse( function(obj) {
         let box = new Box3().setFromObject(obj);
         camera.handleBoxCollision(box);
