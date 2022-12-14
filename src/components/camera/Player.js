@@ -21,6 +21,7 @@ export default class Player extends PerspectiveCamera {
 
     // Handles looking around
     handleLook(point, clientWidth, clientHeight) {
+
         // Calculate distance from center
         const midpoint = new Vector2(clientWidth / 2, clientHeight / 2);
         let dist = point.distanceTo(midpoint);
@@ -33,8 +34,8 @@ export default class Player extends PerspectiveCamera {
         this.rotation.y += ((point.x - midpoint.x) * turnSpeed);
         this.rotation.x += ((point.y - midpoint.y) * turnSpeed);
         // Clamp y rotation to range [-Math.PI, Math.PI]
-        this.rotation.y = Math.max(-Math.PI, this.rotation.y);
-        this.rotation.y = Math.min(this.rotation.y, Math.PI);
+        // this.rotation.x = Math.max(-Math.PI, this.rotation.y);
+        // this.rotation.x = Math.min(this.rotation.y, Math.PI);
 
         // TODO: Make sure x and y rotation stays within acceptable interval
     }
