@@ -1,0 +1,29 @@
+  "images": [
+    {
+      "uri": "textures/DeskMaterial_baseColor.png"
+    },
+    {
+      "uri": "textures/DeskMaterial_metallicRoughness.png"
+    },
+    {
+      "uri": "textures/DeskMaterial_normal.png"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "DeskMaterial",
+      "normalTexture": {
+        "index": 2
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicFactor": 0.0,
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    }
+  ],

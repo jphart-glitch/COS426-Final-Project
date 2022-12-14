@@ -1,0 +1,1 @@
+export { default as Dresser } from './Dresser.js';

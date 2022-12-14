@@ -3,7 +3,7 @@ import { Scene, Color, TetrahedronGeometry } from 'three';
 import { Flower, Land, Mattress } from 'objects';
 import { BasicLights } from 'lights';
 import Box from '../objects/Box/Box';
-import { Desk, Room } from '../objects';
+import { Desk, Dresser, Room, Rug } from '../objects';
 // import { Mattress } from '../objects/Mattress';
 
 class DormScene extends Scene {
@@ -38,6 +38,10 @@ class DormScene extends Scene {
         this.add(room, lights);
         const desk = new Desk();
         this.add(desk);
+        // const rug = new Rug();
+        // this.add(rug);
+        const dresser = new Dresser();
+        this.add(dresser);
 
         // Populate GUI
         this.state.gui.add(this.state, 'rotationSpeed', -5, 5);
@@ -49,7 +53,7 @@ class DormScene extends Scene {
 
     update(timeStamp) {
         const { rotationSpeed, updateList } = this.state;
-        this.rotation.y = (rotationSpeed * timeStamp) / 10000;
+        // this.rotation.y = (rotationSpeed * timeStamp) / 10000;
 
         // Call update for each object in the updateList
         for (const obj of updateList) {
