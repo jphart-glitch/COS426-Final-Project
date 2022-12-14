@@ -1,9 +1,9 @@
 {
-  "name": "late-for-class",
-  "repository": "https://github.com/jphart-glitch/COS426-Final-Project",
+  "name": "lower-case-dashed-name-of-project",
+  "repository": "REPOSITORY-NAME-AS-IT-APPEARS-IN-GITHUB-URL",
   "version": "0.1.0",
-  "title": "Late for Class!",
-  "description": "You're late for class! Find the object your missing before time runs out, or you'll fail your course!",
+  "title": "PROJECT TITLE HERE",
+  "description": "SHORT DESCRIPTION OF PROJECT HERE. ONE TO TWO SENTENCES MAX",
   "keywords": [
     "Princeton",
     "graphics",
@@ -25,7 +25,7 @@
   "dependencies": {
     "dat.gui": "^0.7.7",
     "three": "^0.147.0",
-    "webpack-cli": "^5.0.1"
+    "webpack-cli": "^5.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",

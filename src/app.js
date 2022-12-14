@@ -18,7 +18,9 @@ const camera = new Player();
 const renderer = new WebGLRenderer({ antialias: true });
 
 // Set up camera
-camera.updatePos(6, 3, -10);
+//changed by Hitesha
+// camera.updatePos(6, 3, -10); // (original)
+camera.updatePos(6,3,0)
 camera.lookAt(new Vector3(0, 0, 0));
 
 // STUDENT CODE: Take a point in local DOM coordinates and convert it to world coordinates
@@ -115,6 +117,14 @@ function handleKeyup(event) {
 // }
 // END STUDENT CODE
 
+// HITESHA ADDING STUFF
+// const div = document.createElement('div');
+// const h1 = document.createElement('h1');
+// const text = document.createTextNode('testing testing');
+// h1.appendChild(text);
+// div.appendChild(h1);
+// document.body.appendChild(div);
+
 // Set up renderer, canvas, and minor CSS adjustments
 renderer.setPixelRatio(window.devicePixelRatio);
 const canvas = renderer.domElement;
@@ -122,6 +132,8 @@ canvas.style.display = 'block'; // Removes padding below canvas
 document.body.style.margin = 0; // Removes margin around page
 document.body.style.overflow = 'hidden'; // Fix scrolling
 document.body.appendChild(canvas);
+
+// console.log(document.body);
 
 // Set up controls
 // const controls = new OrbitControls(camera, canvas);
