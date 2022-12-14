@@ -6,124 +6,14 @@
  * handles window resizes.
  *
  */
-import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
+import { WebGLRenderer, Vector2, Vector3, Box3 } from 'three';
 import { default as Player } from './components/camera/Player.js';
-// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { SeedScene, DormScene } from 'scenes';
+import { DormScene } from 'scenes';
 
 // Initialize core ThreeJS components
-// EDITED: To make "normal" again, replace DormScene() with SeedScene()
 const scene = new DormScene();
 const camera = new Player();
 const renderer = new WebGLRenderer({ antialias: true });
-
-// Set up camera
-//changed by Hitesha
-// camera.updatePos(6, 3, -10); // (original)
-camera.updatePos(6,3,0)
-camera.lookAt(new Vector3(0, 0, 0));
-
-// STUDENT CODE: Take a point in local DOM coordinates and convert it to world coordinates
-// Adapted from concept discussed here: https://discourse.threejs.org/t/project-a-2d-screen-point-to-3d-world-point/5713
-function DOMToWorld(clientX, clientY) {
-    let vec = new Vector3();
-    // Convert from local DOM coordinates to NDC coordinates
-    vec.set((clientX / window.innerWidth) * 2 - 1, - (clientY / window.innerHeight) * 2 + 1, 0.5);
-    // Convert from NDC coordinates to world coordinates
-    vec.unproject(camera);
-    // Get the direction vector to the world coord point from the camera
-    vec.sub(camera.position).normalize();
-    // Calculate how far to travel along the direction vector
-    let distance = camera.position.z - vec.z;
-    // Calculate the position that lies on the direction vector and is at correct z level
-    let pos = camera.position.clone().add(vec.multiplyScalar(distance));
-    return pos;
-}
-
-// STUDENT CODE: Update camera position based on key input
-// Add event listener for key presses
-window.addEventListener(
-    "keydown",
-    handleKeydown
-);
-
-// Functions for handling key presses
-var keyPressed = {};
-
-// Handle pressing the key
-function handleKeydown(event) {
-
-    // Mapping of camera movement vectors
-    const moveMap = {
-        ArrowUp: new Vector3(0, 0, 1),
-        ArrowDown: new Vector3(0, 0, -1),
-        ArrowLeft: new Vector3(1, 0, 0),
-        ArrowRight: new Vector3(-1, 0, 0),
-        " ": new Vector3(0, 1, 0),
-        Shift: new Vector3(0, -1, 0)
-    };
-    // Scale to adjust movement vectors by
-    const scale = 1;
-
-    // If an arrow key, space bar, or shift key is pressed, move the camera in the correct direction
-    if (event.key == "ArrowUp" || event.key == "ArrowDown" || event.key == "ArrowLeft" || event.key == "ArrowRight" || event.key == " " || event.key == "Shift") {
-        let newCameraPos = camera.position.clone().add(moveMap[event.key].clone().multiplyScalar(scale));
-        camera.updatePos(newCameraPos.x, newCameraPos.y, newCameraPos.z);
-        camera.lookingAt.add(moveMap[event.key].clone().multiplyScalar(scale));
-        camera.lookAt(camera.lookingAt);
-    }
-}
-
-// Handle letting go of the key
-function handleKeyup(event) {
-
-    // Mapping of camera movement vectors
-    const moveMap = {
-        ArrowUp: new Vector3(0, 0, 1),
-        ArrowDown: new Vector3(0, 0, -1),
-        ArrowLeft: new Vector3(1, 0, 0),
-        ArrowRight: new Vector3(-1, 0, 0),
-        " ": new Vector3(0, 1, 0),
-        Shift: new Vector3(0, -1, 0)
-    };
-
-    // Scale to adjust movement vectors by
-    const scale = 1;
-
-    // If an arrow key, space bar, or shift key is pressed, move the camera in the correct direction
-    if (event.key == "ArrowUp" || event.key == "ArrowDown" || event.key == "ArrowLeft" || event.key == "ArrowRight" || event.key == " " || event.key == "Shift") {
-        let newCameraPos = camera.position.clone().add(moveMap[event.key].clone().multiplyScalar(scale));
-        camera.updatePos(newCameraPos.x, newCameraPos.y, newCameraPos.z);
-        camera.lookingAt.add(moveMap[event.key].clone().multiplyScalar(scale));
-        camera.lookAt(camera.lookingAt);
-    }
-}
-// END STUDENT CODE
-
-// STUDENT CODE (BUGGY, NOT WORKING): UPDATE CAMERA LOOK AT BASED ON MOUSE MOVEMENT
-// Add event listener for key presses
-// window.addEventListener(
-//     "mousemove",
-//     handleMouseMove
-// );
-
-// // Function for handling mouse movements
-// function handleMouseMove(event) {
-
-//     let worldPoint = DOMToWorld(event.clientX, event.clientY);
-//     camera.lookAt(worldPoint);
-//     camera.updateProjectionMatrix();
-//     camera.getWorldDirection(focus);
-// }
-// END STUDENT CODE
-
-// HITESHA ADDING STUFF
-// const div = document.createElement('div');
-// const h1 = document.createElement('h1');
-// const text = document.createTextNode('testing testing');
-// h1.appendChild(text);
-// div.appendChild(h1);
-// document.body.appendChild(div);
 
 // Set up renderer, canvas, and minor CSS adjustments
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -133,24 +23,200 @@ document.body.style.margin = 0; // Removes margin around page
 document.body.style.overflow = 'hidden'; // Fix scrolling
 document.body.appendChild(canvas);
 
-// console.log(document.body);
+// Add pause menu and its CSS adjustments
+const overlay = document.createElement('div');
+const text = document.createElement('h1');
 
-// Set up controls
-// const controls = new OrbitControls(camera, canvas);
-// controls.enableDamping = true;
-// controls.enablePan = false;
-// controls.minDistance = 4;
-// controls.maxDistance = 16;
-// controls.update();
+// If I could just do this, it would get rid of the ugly mess below
+// overlay.setAttribute('class', 'pause-menu-text');
+text.style.position = 'absolute';
+text.style.top = '50%';
+text.style.left = '50%';
+text.style.fontSize = '50px';
+text.style.color = 'white';
+text.style.transform = 'translate(-50%,-50%)';
+text.appendChild(document.createTextNode("Paused"));
+overlay.appendChild(text);
+// If I could just do this, it would get rid of the ugly mess below
+// overlay.setAttribute('class', 'pause-menu');
+overlay.style.position = 'fixed';
+overlay.style.display = 'none';
+overlay.style.width = '100%';
+overlay.style.height = '100%';
+overlay.style.top = '0';
+overlay.style.left = '0';
+overlay.style.right = '0';
+overlay.style.bottom = '0';
+overlay.style.backgroundColor = 'rgba(0,0,0,0.5)';
+overlay.style.zIndex = '2';
+overlay.style.cursor = 'pointer';
+document.body.appendChild(overlay);
+
+// Set up camera
+camera.position.set(6, 3, 0);
+camera.lookAt(new Vector3(0, 0, 0));
+
+// Add event listener for mouse movement
+window.addEventListener(
+    "mousemove",
+    handleMouseMove
+);
+
+// Add event listener for key presses (holding down and letting go)
+window.addEventListener(
+    "keydown",
+    handleKeydown
+);
+window.addEventListener(
+    "keyup",
+    handleKeyup
+);
+
+// Handle mouse movement (looking around the scene)
+function handleMouseMove(event) {
+
+    // If game is paused, do nothing further
+    if (keyPressed["Escape"]) return;
+
+    let point = new Vector2(event.clientX, event.clientY);
+    camera.handleLook(point, canvas.width, canvas.height);
+}
+
+// Functions for handling key presses
+var keyPressed = {
+    ArrowUp: false,
+    ArrowDown: false,
+    ArrowLeft: false,
+    ArrowRight: false,
+    Shift: {
+        "1": false,
+        "2": false
+    },
+    " ": false,
+    Escape: false
+};
+
+// Handle pressing the key
+function handleKeydown(event) {
+
+    // If escape is pressed, pause game and bring up pause screen
+    if (event.key == "Escape") {
+        if (keyPressed[event.key]) {
+            overlay.style.display = 'none';
+            // If crouched, uncrouch upon exiting pause menu
+            if (keyPressed["Shift"[1]]) camera.handleCrouch();
+            // Switch to uncrouched/not sprinting state
+            keyPressed["Shift"[1]] = false;
+            keyPressed["Shift"[2]] = false;
+
+        }
+        else overlay.style.display = 'block';
+        keyPressed[event.key] = !keyPressed[event.key];
+    }
+
+    // If game is paused, do nothing further
+    if (keyPressed["Escape"]) return;
+
+    // If an arrow key, switch state of that keyPressed value
+    if (event.key == "ArrowUp" || event.key == "ArrowDown" || event.key == "ArrowLeft" || event.key == "ArrowRight" || event.key == " ") {
+        keyPressed[event.key] = true;
+    }
+
+    // If a shift key, switch state of that keyPressed value
+    if (event.key == "Shift") {
+        keyPressed[event.key[event.location]] = true;
+        // If the left shift key, make the camera handle crouching
+        if (event.location == 1) camera.handleCrouch();
+    }
+
+    // If the space key and player is not crouching, switch state of jumping and set initial state of velocity
+    if (event.key == " ") {
+        if (!camera.jumping) {
+            const JUMP_HEIGHT = 0.2;
+            camera.jumping = true;
+            camera.jumpY = camera.position.y;
+            camera.velocity = -JUMP_HEIGHT;
+        }
+    }
+}
+
+// Handle letting go of the key
+function handleKeyup(event) {
+
+    // If game is paused, do nothing further
+    if (keyPressed["Escape"]) return;
+
+    // If an arrow key or space bar is pressed, switch state of that keyPressed value
+    if (event.key == "ArrowUp" || event.key == "ArrowDown" || event.key == "ArrowLeft" || event.key == "ArrowRight" || event.key == " ") {
+        keyPressed[event.key] = false;
+    }
+
+    // If a shift key, 
+    if (event.key == "Shift") {
+        keyPressed[event.key[event.location]] = false;
+        // If the left shift key, make the camera handle crouching
+        if (event.location == 1) camera.handleCrouch();
+    }
+}
+
+// Handle movement using verlet integration
+function movePlayer() {
+
+    // If game is paused, do nothing further
+    if (keyPressed["Escape"]) return;
+
+    // Scale to adjust lateral movement by
+    let speed = 0.1;
+
+    // If right shift (sprint key) is held down, increase speed
+    if (keyPressed["Shift"["2"]]) {
+        speed = 0.25;
+    }
+
+    // If left shift (crouch key) is held down, decrease speed
+    if (keyPressed["Shift"["1"]]) {
+        speed /= 2;
+    }
+
+    // Check for lateral movement key input; if detected, call relevant handler function
+    if (keyPressed["ArrowUp"]) {
+        camera.moveForward(speed);
+    }
+    if (keyPressed["ArrowDown"]) {
+        camera.moveBackward(speed);
+    }
+    if (keyPressed["ArrowLeft"]) {
+        camera.moveLeft(speed);
+    }
+    if (keyPressed["ArrowRight"]) {
+        camera.moveRight(speed);
+    }
+
+    // If the space bar (jump key) is pressed, call relevant handler function
+    if (keyPressed[" "] || camera.jumping) {
+        camera.handleJump();
+    }
+}
+
+// Calls relevant handler function for any collisions
+function handleCollisions() {
+
+    // If game is paused, do nothing further
+    if (keyPressed["Escape"]) return;
+
+    scene.traverse( function(obj) {
+        let box = new Box3().setFromObject(obj);
+        camera.handleBoxCollision(box);
+    });
+}
 
 // Render loop
-var prevTime = 0;
 const onAnimationFrameHandler = (timeStamp) => {
-    // controls.update();
+    movePlayer();
+    handleCollisions();
     renderer.render(scene, camera);
     scene.update && scene.update(timeStamp);
     window.requestAnimationFrame(onAnimationFrameHandler);
-    prevTime = timeStamp;
 };
 window.requestAnimationFrame(onAnimationFrameHandler);
 
