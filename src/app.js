@@ -126,7 +126,7 @@ let gamePaused = false;
 let starttime;
 let remaining = 0;
 let timeouttask;
-let timelimit = 30*1000;
+let timelimit = 10*1000;
 
 // const date = new Date();
 
@@ -206,11 +206,29 @@ const endOfGame = function() {
     gameStarted = false;
 
     controls.unlock();
+    text.removeChild(text.firstChild);
+    text.appendChild(document.createTextNode('You Took Too Long!'));
+};
+
+const win = function() {
+    window.clearTimeout(timeouttask);
+    gameStarted = false;
+    controls.unlock();
+    text.removeChild(text.firstChild);
+    text.appendChild(document.createTextNode('Great job!'));
+};
+
+const lose = function() {
+    window.clearTimeout(timeouttask);
+    gameStarted = false;
+    controls.unlock();
+    text.removeChild(text.firstChild);
+    text.appendChild(document.createTextNode('Wrong Object!'));
 };
 
 const reloadGame = function() {
     location.reload();
-}
+};
 
 // Set up camera
 camera.position.set(10, 1.5, 0);
@@ -481,6 +499,15 @@ function select() {
     })
     console.log(best_dist);
     console.log(best_object);
+
+    if (best_object.name == "waterbottle") {
+        console.log('you won!');
+        win();
+    }
+    else {
+        console.log('you lost.');
+        lose();
+    }
 }
 
 function childSelect(object) {
