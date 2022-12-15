@@ -18,6 +18,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { LoadingManager } from 'three/src/loaders/LoadingManager.js';
 import { default as Player } from './components/camera/Player.js';
 import { DormScene } from 'scenes';
+const imgPath = require('./wb.png');
 
 /* ------------------------------------------------------------------ */
 /*                                                                    */
@@ -152,6 +153,28 @@ timerbox.style.backgroundColor = 'rgba(255,161,54,0.5)';
 timerbox.style.textAlign = 'center';
 timerbox.style.borderRadius = '10px';
 document.body.appendChild(timerdiv);
+
+const objectbox = document.createElement('div');
+timerdiv.appendChild(objectbox);
+objectbox.style.position = 'absolute';
+objectbox.style.top = '65%';
+objectbox.style.left = '5%';
+objectbox.style.width = '30%';
+objectbox.style.height = '30%';
+objectbox.style.backgroundColor = 'rgba(255,161,54,0.5)';
+objectbox.style.textAlign = 'center';
+objectbox.style.borderRadius = '10px';
+const objecttext = document.createElement('h3');
+objecttext.appendChild(document.createTextNode('Find this object:'));
+objectbox.appendChild(objecttext);
+const img = document.createElement('img');
+img.src = imgPath;
+objectbox.appendChild(img);
+img.style.position = 'absolute';
+img.style.width = '50%';
+img.style.height = 'auto';
+img.style.left = '25%';
+img.style.borderRadius = '5px';
 
 const updatetimer = function() {
     if (!gamePaused) {
