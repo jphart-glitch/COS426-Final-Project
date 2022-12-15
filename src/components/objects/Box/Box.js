@@ -1,8 +1,9 @@
-import { Group, BoxGeometry, MeshBasicMaterial, Mesh, TextureLoader, Texture } from 'three';
+import { Group, BoxGeometry, MeshBasicMaterial, Mesh, TextureLoader, MeshPhysicalMaterial, MeshPhongMaterial } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import MODEL from './mattress.gltf';
 require('./scene.bin');
-const pngPath = require('./floral.png');
+const pngPath = require('./tigerprint.jpeg');
+const woodPath = require('./wood.jpeg');
 
 class Box extends Group {
     constructor() {
@@ -15,6 +16,7 @@ class Box extends Group {
 
 
         const texture = new TextureLoader().load(pngPath);
+        const frameTexture = new TextureLoader().load(woodPath);
 
         // ./src/components/objects/Box/
         // let object = new ArrayBuffer(MODEL);
@@ -23,10 +25,11 @@ class Box extends Group {
         //     this.add(gltf.scene);
         // })
 
-        // const geometry = new BoxGeometry( 1, 1, 1 );
-        // const material = new MeshBasicMaterial( { map: texture } );
-        // const cube = new Mesh( geometry, material );
-        // this.add( cube );
+        const geometry = new BoxGeometry( 1.3, 0.5, 2.1 );
+        const material = new MeshPhysicalMaterial( { map: frameTexture } );
+        const bedframe = new Mesh( geometry, material );
+        this.add( bedframe );
+        bedframe.geometry.translate(-1.35,0.25,-0.95);
 
         loader.load(MODEL, (gltf) => {
             // console.log(gltf.scene);
@@ -35,12 +38,15 @@ class Box extends Group {
             // console.log(gltf.scene);
             gltf.scene.traverse( function(object) {
                 if ( object.isMesh ) {
+                    // console.log(object.name);
                     object.material.dispose();
-                    object.material = new MeshBasicMaterial( { map: texture } );
+                    object.material = new MeshPhongMaterial( { map: texture } );
                 }
             } );
             this.add(gltf.scene);
-            gltf.scene.rotateY(Math.PI);
+            gltf.scene.rotateY(Math.PI/2);
+            gltf.scene.translateY(0.5);
+            gltf.scene.translateZ(-1.9);
             gltf.scene.translateX(0);
         });
     }

@@ -1,7 +1,9 @@
-import { Group, Vector3, TextureLoader, MeshBasicMaterial } from 'three';
+import { Group, Vector3, TextureLoader, MeshBasicMaterial, MeshPhongMaterial } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import MODEL from './scene.gltf';
+import CLOSETMODEL from './closetscene.gltf';
 require('./scene.bin');
+require('./closetscene.bin');
 const jpegPath = require('./wood.jpeg');
 
 class Dresser extends Group {
@@ -21,20 +23,28 @@ class Dresser extends Group {
             gltf.scene.traverse( function(object) {
                 if ( object.isMesh ) {
                     // console.log(object.name);
-                    object.scale.set(20, 20, 20);
+                    object.scale.set(12, 12, 12);
                     object.material.dispose();
-                    object.material = new MeshBasicMaterial( { map: texture } );
+                    object.material = new MeshPhongMaterial( { map: texture } );
                     // object.material = new MeshBasicMaterial( { color: 0xffffff } );
                 }
             } );
-            // gltf.scene.scale.x = 0.1;
-            // gltf.scene.scale.y = 0.1;
-            // gltf.scene.scale.z = 0.1;
             this.add(gltf.scene);
-            // gltf.scene.translateY(-20);
+            gltf.scene.translateZ(1.5);
+        });
+
+        loader.load(CLOSETMODEL, (gltf) => {
+            gltf.scene.traverse( function(object) {    
+                if ( object.isMesh ) {
+                    object.scale.set(0.2,0.2,0.2);
+                    object.material.dispose();
+                    object.material = new MeshPhongMaterial( { map: texture } );
+                }
+            } );
+            this.add(gltf.scene);
             gltf.scene.rotateY(Math.PI);
-            gltf.scene.translateZ(-2);
-            gltf.scene.translateX(1);
+            gltf.scene.translateX(1.25);
+            gltf.scene.translateZ(-1.7);
         });
     }
 }

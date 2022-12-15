@@ -5,3 +5,4 @@ export * from './Room';
 export * from './Desk';
 export * from './Rug';
 export * from './Dresser';
+export * from './Decor';

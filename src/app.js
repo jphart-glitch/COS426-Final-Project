@@ -53,7 +53,7 @@ overlay.style.cursor = 'pointer';
 document.body.appendChild(overlay);
 
 // Set up camera
-camera.position.set(10, -1.5, 0);
+camera.position.set(10, 1.5, 0);
 camera.lookAt(new Vector3(0, 0, 0));
 
 // Add event listener for mouse movement
