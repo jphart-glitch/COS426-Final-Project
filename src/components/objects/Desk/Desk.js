@@ -20,7 +20,7 @@ class Desk extends Group {
         loader.load(MODEL, (gltf) => {
             gltf.scene.traverse( function(object) {
                 if ( object.isMesh ) {
-                    console.log(object.name);
+                    // console.log(object.name);
                     object.material.dispose();
                     object.material = new MeshPhongMaterial( { map: texture } );
                 }
@@ -42,7 +42,7 @@ class Desk extends Group {
             gltf.scene.translateY(8.2);
             gltf.scene.translateX(2.3);
             // console.log(gltf.scene.getWorldPosition());
-            console.log(gltf.scene.position);
+            // console.log(gltf.scene.position);
         });
     }
 }

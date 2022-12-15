@@ -515,8 +515,8 @@ function select() {
             }
         }
     })
-    console.log(best_dist);
-    console.log(best_object);
+    // console.log(best_dist);
+    // console.log(best_object);
 
     if (best_object.name == "waterbottle") {
         console.log('you won!');

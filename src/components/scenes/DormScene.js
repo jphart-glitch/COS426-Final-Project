@@ -14,7 +14,7 @@ class DormScene extends Scene {
 
         // Init state
         this.state = {
-            gui: new Dat.GUI(), // Create GUI for scene
+            // gui: new Dat.GUI(), // Create GUI for scene
             rotationSpeed: 1,
             updateList: [],
         };
@@ -51,7 +51,7 @@ class DormScene extends Scene {
         this.add(wb);
 
         // Populate GUI
-        this.state.gui.add(this.state, 'rotationSpeed', -5, 5);
+        // this.state.gui.add(this.state, 'rotationSpeed', -5, 5);
     }
 
     addToUpdateList(object) {

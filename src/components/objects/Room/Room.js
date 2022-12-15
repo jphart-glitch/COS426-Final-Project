@@ -1,6 +1,5 @@
 import { Group, PlaneGeometry, MeshBasicMaterial, Mesh, DoubleSide, MeshPhongMaterial, Euler, SphereGeometry, Vector3, TextureLoader } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { BoxHelper } from 'three/src/helpers/BoxHelper.js';
 // import MODEL from './mattress.gltf';
 const jpegPath = require('./floortexture.jpeg');
 
@@ -39,17 +38,6 @@ class Room extends Group {
         wall2.geometry.translate(0.5, 1.5, -2);
         wall3.geometry.translate(-2, 1.5, 0);
         wall4.geometry.translate(3, 1.5, 0);
-
-        let boxHelper = new BoxHelper(wall1, 0xffff00);
-        this.add(boxHelper);
-        boxHelper = new BoxHelper(wall2, 0xffff00);
-        this.add(boxHelper);
-        boxHelper = new BoxHelper(wall3, 0xffff00);
-        this.add(boxHelper);
-        boxHelper = new BoxHelper(wall4, 0xffff00);
-        this.add(boxHelper);
-        boxHelper = new BoxHelper(floor, 0xffff00);
-        this.add(boxHelper);
 
         const g = new SphereGeometry(0.05);
         const m = new MeshPhongMaterial( { color: 0x000000 } );
