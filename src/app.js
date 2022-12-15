@@ -69,7 +69,7 @@ manager.onLoad = function() {
 
 // Load scene
 const loader = new OBJLoader(manager);
-loader.load("./components/scenes/DormScene.js", function(object) {
+loader.load("/assets", function(object) {
 });
 
 // Initialize core ThreeJS components
@@ -168,7 +168,7 @@ objectbox.style.backgroundColor = 'rgba(255,161,54,0.5)';
 objectbox.style.textAlign = 'center';
 objectbox.style.borderRadius = '10px';
 const objecttext = document.createElement('h3');
-objecttext.appendChild(document.createTextNode('Find this object:'));
+objecttext.appendChild(document.createTextNode('Find this object and press \'E\' to select it:'));
 objectbox.appendChild(objecttext);
 const img = document.createElement('img');
 img.src = imgPath;
@@ -434,7 +434,7 @@ function movePlayer() {
     camera.prevPosition = camera.position.clone();
 
     // Scale to adjust lateral movement by
-    let speed = 0.1;
+    let speed = 0.025;
 
     // If left shift (sprint key) is held down, increase speed
     if (keyPressed["Shift"["1"]]) {
