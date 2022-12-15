@@ -189,6 +189,7 @@ const buttonclick = function() {
     controls.lock();
     if (gameStarted) {
         timeouttask = window.setTimeout(endOfGame, remaining);
+        sound.play();
     }
     else {
         timeouttask = window.setTimeout(endOfGame, timelimit);
@@ -198,6 +199,7 @@ const buttonclick = function() {
         camera.position.set(2.30, 1.5, 0.3);
         remaining = timelimit;
         console.log(remaining/1000);
+        sound.play();
     }
 };
 
@@ -245,8 +247,8 @@ audioLoader.load(soundPath, function( buffer ) {
     sound.setBuffer( buffer );
     // sound.setLoop( true );
     sound.setVolume( 0.5 );
-    sound.play();
-})
+    // sound.play();
+});
 
 /* ------------------------------------------------------------------ */
 /*                                                                    */
@@ -308,6 +310,7 @@ controls.addEventListener(
         keyPressed["Escape"] = !keyPressed["Escape"];
 
         gamePaused = true;
+        sound.pause();
         if (gameStarted) {
             window.clearTimeout(timeouttask);
             remaining -= Date.now() - starttime;
