@@ -13,8 +13,9 @@
 /* ------------------------------------------------------------------ */
 
 import { WebGLRenderer, Vector2, Vector3, Box3 } from 'three';
-// import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { LoadingManager } from 'three/src/loaders/LoadingManager.js';
 import { default as Player } from './components/camera/Player.js';
 import { DormScene } from 'scenes';
 
@@ -23,6 +24,49 @@ import { DormScene } from 'scenes';
 /* Scene setup                                                        */
 /*                                                                    */
 /* ------------------------------------------------------------------ */
+
+// Set up loading screen
+const loading_screen = document.createElement('div');
+const loading_text = document.createElement('h1');
+loading_text.style.position = 'absolute';
+loading_text.style.top = '50%';
+loading_text.style.left = '50%';
+loading_text.style.fontSize = '50px';
+loading_text.style.color = 'white';
+loading_text.style.transform = 'translate(-50%, -150%)'
+loading_text.appendChild(document.createTextNode("Loading..."));
+loading_screen.appendChild(loading_text);
+loading_screen.style.position = 'fixed';
+loading_screen.style.display = 'none';
+loading_screen.style.width = '100%';
+loading_screen.style.height = '100%';
+loading_screen.style.top = '0';
+loading_screen.style.left = '0';
+loading_screen.style.right = '0';
+loading_screen.style.bottom = '0';
+loading_screen.style.backgroundColor = 'rgba(0,0,0,1)';
+loading_screen.style.zIndex = '2';
+loading_screen.style.cursor = 'pointer';
+loading_screen.style.userSelect = 'none';
+document.body.appendChild(loading_screen);
+
+// Instantiate loading manager
+const manager = new LoadingManager();
+// When loading starts, display loading screen
+manager.onStart = function(url, itemsLoaded, itemsTotal) {
+    console.log("Loading scene...");
+    loading_screen.style.display = 'block';
+};
+// When loading finishes, get rid of loading screen
+manager.onLoad = function() {
+    console.log("Loading complete!");
+    loading_screen.style.display = 'none';
+}
+
+// Load scene
+const loader = new OBJLoader(manager);
+loader.load("./components/scenes/DormScene.js", function(object) {
+});
 
 // Initialize core ThreeJS components
 const scene = new DormScene();
