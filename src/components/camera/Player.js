@@ -169,59 +169,6 @@ export default class Player extends PerspectiveCamera {
         // this.position.y += 1.5;
     }
 
-    // Handles collisions between room bounding box and player hitbox (keeps player
-    // inside of room)
-    // handleRoomBoundary(box) {
-    //     // Can adjust as needed to reduce clipping
-    //     const EPS = 0.05;
-
-    //     // Can adjust as needed to account for friction - not considered much in the scope
-    //     // of this implementation, but can be used in the future
-    //     const friction = 0.9;
-
-    //     // Positions vectors accounting for no friction and friction respectively
-    //     let posFriction = new Vector3();
-    //     let posNoFriction = new Vector3();
-
-    //     // If the character is inside the object's hitbox,
-    //     // then "push" character to nearest outside face
-
-    //     // Check if inside box; if not, do nothing
-    //     let boundingBoxEPS = new Box3(box.min.subScalar(EPS), box.max.addScalar(EPS));
-    //     if (!boundingBoxEPS.intersectsBox(this.hitbox)) return;
-    //     // If so, compute posNoFriction - projection of the particle’s current position to the nearest point on the box's nearest face
-    //     let faces = new Array();
-    //     posNoFriction = new Vector3(boundingBoxEPS.min.x + EPS, this.position.y, this.position.z);
-    //     faces.push(new Vector3(this.position.x, boundingBoxEPS.min.y + EPS, this.position.z));
-    //     faces.push(new Vector3(this.position.x, this.position.y, boundingBoxEPS.min.z + EPS));
-    //     faces.push(new Vector3(boundingBoxEPS.max.x - EPS, this.position.y, this.position.z));
-    //     faces.push(new Vector3(this.position.x, boundingBoxEPS.max.y - EPS, this.position.z));
-    //     faces.push(new Vector3(this.position.x, this.position.y, boundingBoxEPS.max.z - EPS));
-    //     for (let i = 0; i < 5; i++) {
-    //         if (i == 1 || i == 4) {
-
-    //         }
-    //         if (this.position.distanceTo(faces[i]) < this.position.distanceTo(posNoFriction)) {
-    //             posNoFriction = faces[i];
-    //         }
-    //     }
-    //     // If the particle was outside the box before, account for friction
-    //     if (!boundingBoxEPS.containsBox(this.prevHitbox)) {
-    //         posFriction = this.prevPosition.clone().multiplyScalar(friction);
-    //         posNoFriction.multiplyScalar(1.0 - friction);
-    //         posFriction.add(posNoFriction);
-    //         this.position.x = posFriction.x;
-    //         this.position.y = posFriction.y;
-    //         this.position.z = posFriction.z;
-    //     }
-    //     // Else do not account for friction
-    //     else {
-    //         this.position.x = posNoFriction.x;
-    //         this.position.y = posNoFriction.y;
-    //         this.position.z = posNoFriction.z;
-    //     };
-    //     // this.position.y += 1.5;
-    // }
     handleRoomBoundary(box) {
         // Can adjust as needed to reduce clipping
         const EPS = 0.05;
