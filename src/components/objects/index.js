@@ -8,3 +8,4 @@ export * from './Desk';
 // export * from './Decor';
 export * from './WaterBottle';
 export * from './Closet';
+export * from './Extras';
