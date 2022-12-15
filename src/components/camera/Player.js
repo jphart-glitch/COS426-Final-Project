@@ -1,6 +1,25 @@
-import { PerspectiveCamera, Vector2, Vector3, Box3 } from 'three';
+/* ------------------------------------------------------------------ */
+/*                                                                    */
+/* Player.js                                                          */
+/* Authors: John Hart and Hitesha Ukey                                */
+/*                                                                    */
+/* ------------------------------------------------------------------ */
+
+/* ------------------------------------------------------------------ */
+/*                                                                    */
+/* Import statements                                                  */
+/*                                                                    */
+/* ------------------------------------------------------------------ */
+
+import { PerspectiveCamera, Vector3, Box3 } from 'three';
 
 export default class Player extends PerspectiveCamera {
+
+    /* -------------------------------------------------------------- */
+    /*                                                                */
+    /* Constructor                                                    */
+    /*                                                                */
+    /* -------------------------------------------------------------- */
     constructor(fov=50, aspect=1, near=0.1, far=2000) {
         // Call parent PerspectiveCamera() constructor
         super(fov, aspect, near, far);
@@ -13,64 +32,15 @@ export default class Player extends PerspectiveCamera {
         this.crouching = false;
         // player's velocity (used only in jumping calculations)
         this.velocity = 0;
-        // point in 3D space where camera is looking at
-        this.lookingAt = new Vector3(0, 0, 0);
         // previous position used to readjust camera view dynamically
         this.prevPosition = new Vector3(0, 0, 0);
     }
 
-    // Handles looking around
-    handleLook(point, clientWidth, clientHeight) {
-
-        // Calculate distance from center
-        const midpoint = new Vector2(clientWidth / 2, clientHeight / 2);
-        let dist = point.distanceTo(midpoint);
-
-        // Use distance to scale turn speed
-        const scale = dist/ (Math.min(clientWidth, clientHeight) / 2);
-        const turnSpeed = 0.00005 * scale;
-
-        // Adjust rotations
-        this.rotation.y += ((point.x - midpoint.x) * turnSpeed);
-        this.rotation.x += ((point.y - midpoint.y) * turnSpeed);
-        // Clamp y rotation to range [-Math.PI, Math.PI]
-        // this.rotation.x = Math.max(-Math.PI, this.rotation.y);
-        // this.rotation.x = Math.min(this.rotation.y, Math.PI);
-
-        // TODO: Make sure x and y rotation stays within acceptable interval
-    }
-
-    // Given a speed, moves the player forward and adjusts camera position, view, and hitbox
-    moveForward(speed) {
-        let oldPos = this.position.clone();
-        this.position.x -= Math.sin(this.rotation.y) * speed;
-        this.position.z -= -Math.cos(this.rotation.y) * speed;
-        this.prevPosition = oldPos;
-    }
-
-    // Given a speed, moves the player backward and adjusts camera position, view, and hitbox
-    moveBackward(speed) {
-        let oldPos = this.position.clone();
-        this.position.x += Math.sin(this.rotation.y) * speed;
-        this.position.z += -Math.cos(this.rotation.y) * speed;
-        this.prevPosition = oldPos;
-    }
-
-    // Given a speed, moves the player leftward and adjusts camera position, view, and hitbox
-    moveLeft(speed) {
-        let oldPos = this.position.clone();
-        this.position.x += Math.sin(this.rotation.y + Math.PI / 2) * speed;
-        this.position.z += -Math.cos(this.rotation.y + Math.PI / 2) * speed;
-        this.prevPosition = oldPos;
-    }
-
-    // Given a speed, moves the player rightward and adjusts camera position, view, and hitbox
-    moveRight(speed) {
-        let oldPos = this.position.clone();
-        this.position.x += Math.sin(this.rotation.y - Math.PI / 2) * speed;
-        this.position.z += -Math.cos(this.rotation.y - Math.PI / 2) * speed;
-        this.prevPosition = oldPos;
-    }
+    /* -------------------------------------------------------------- */
+    /*                                                                */
+    /* Misc movement functions                                        */
+    /*                                                                */
+    /* -------------------------------------------------------------- */
 
     // Handles the player's jumping based on jump arc
     handleJump() {
@@ -102,6 +72,12 @@ export default class Player extends PerspectiveCamera {
             this.prevPosition = oldPos;
         }
     }
+
+    /* -------------------------------------------------------------- */
+    /*                                                                */
+    /* Collision handling functions                                   */
+    /*                                                                */
+    /* -------------------------------------------------------------- */
 
     // Handles collisions between character and an object's bounding box 
     handleBoxCollision(box) {
