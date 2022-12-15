@@ -4,7 +4,7 @@ import { Flower, Land, Mattress } from 'objects';
 import { BasicLights } from 'lights';
 import { BoxHelper } from 'three/src/helpers/BoxHelper.js';
 import Box from '../objects/Box/Box';
-import { Decor, Desk, Dresser, Room, Rug, WaterBottle } from '../objects';
+import { Closet, Decor, Desk, Dresser, Room, Rug, WaterBottle } from '../objects';
 // import { Mattress } from '../objects/Mattress';
 
 class DormScene extends Scene {
@@ -49,6 +49,8 @@ class DormScene extends Scene {
         // this.add(decor);
         const wb = new WaterBottle();
         this.add(wb);
+        const closet = new Closet();
+        this.add(closet);
 
         // Populate GUI
         // this.state.gui.add(this.state, 'rotationSpeed', -5, 5);
