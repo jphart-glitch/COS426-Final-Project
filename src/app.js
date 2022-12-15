@@ -171,6 +171,7 @@ const buttonclick = function() {
         starttime = Date.now();
         console.log('starttime: ', starttime);
         gameStarted = true;
+        camera.position.set(2.30, 1.5, 0.2);
         remaining = timelimit;
         console.log(remaining/1000);
     }
@@ -406,7 +407,8 @@ function handleCollisions() {
 
     scene.children.forEach(object => {
         if (object.name == "room") {
-            
+            let box = new Box3().setFromObject(object);
+            camera.handleRoomBoundary(box);
         }
         else {
             childCollision(object);
