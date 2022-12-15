@@ -19,7 +19,9 @@ import { LoadingManager } from 'three/src/loaders/LoadingManager.js';
 import { default as Player } from './components/camera/Player.js';
 import { DormScene } from 'scenes';
 const imgPath = require('./wb.png');
-const soundPath = require('./background.ogg')
+const soundPath = require('./background.ogg');
+const correctPath = require('./correct.ogg');
+const wrongPath = require('./wrong.ogg');
 
 /* ------------------------------------------------------------------ */
 /*                                                                    */
@@ -172,9 +174,9 @@ const img = document.createElement('img');
 img.src = imgPath;
 objectbox.appendChild(img);
 img.style.position = 'absolute';
-img.style.width = '50%';
-img.style.height = 'auto';
-img.style.left = '25%';
+img.style.width = 'auto';
+img.style.height = '60%';
+img.style.left = '30%';
 img.style.borderRadius = '5px';
 
 const updatetimer = function() {
@@ -220,6 +222,7 @@ const win = function() {
     controls.unlock();
     text.removeChild(text.firstChild);
     text.appendChild(document.createTextNode('Great job!'));
+    correct.play();
 };
 
 const lose = function() {
@@ -228,6 +231,7 @@ const lose = function() {
     controls.unlock();
     text.removeChild(text.firstChild);
     text.appendChild(document.createTextNode('Wrong Object!'));
+    wrong.play();
 };
 
 const reloadGame = function() {
@@ -249,6 +253,16 @@ audioLoader.load(soundPath, function( buffer ) {
     sound.setVolume( 0.5 );
     // sound.play();
 });
+const correct = new Audio(listener);
+audioLoader.load(correctPath, function(buffer) {
+    correct.setBuffer(buffer);
+    correct.setVolume(0.5);
+})
+const wrong = new Audio(listener);
+audioLoader.load(wrongPath, function(buffer) {
+    wrong.setBuffer(buffer);
+    wrong.setVolume(0.5);
+})
 
 /* ------------------------------------------------------------------ */
 /*                                                                    */
