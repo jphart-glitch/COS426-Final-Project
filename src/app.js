@@ -12,13 +12,14 @@
 /*                                                                    */
 /* ------------------------------------------------------------------ */
 
-import { WebGLRenderer, Vector2, Vector3, Box3 } from 'three';
+import { WebGLRenderer, Vector2, Vector3, Box3, AudioLoader, AudioListener, Audio } from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { LoadingManager } from 'three/src/loaders/LoadingManager.js';
 import { default as Player } from './components/camera/Player.js';
 import { DormScene } from 'scenes';
 const imgPath = require('./wb.png');
+const soundPath = require('./background.ogg')
 
 /* ------------------------------------------------------------------ */
 /*                                                                    */
@@ -126,7 +127,7 @@ let gamePaused = false;
 let starttime;
 let remaining = 0;
 let timeouttask;
-let timelimit = 10*1000;
+let timelimit = 26*1000;
 
 // const date = new Date();
 
@@ -233,6 +234,18 @@ const reloadGame = function() {
 // Set up camera
 camera.position.set(10, 1.5, 0);
 camera.lookAt(new Vector3(0, 0, 0));
+
+// Add audio to Camera
+const listener = new AudioListener();
+camera.add(listener);
+const sound = new Audio(listener);
+const audioLoader = new AudioLoader();
+audioLoader.load(soundPath, function( buffer ) {
+    sound.setBuffer( buffer );
+    // sound.setLoop( true );
+    sound.setVolume( 0.5 );
+    sound.play();
+})
 
 /* ------------------------------------------------------------------ */
 /*                                                                    */
