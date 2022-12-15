@@ -149,7 +149,7 @@ var keyPressed = {
         "2": false
     },
     " ": false,
-    "Escape": false
+    "Escape": true
 };
 
 
