@@ -69,8 +69,8 @@ overlay.style.userSelect = 'none';
 document.body.appendChild(overlay);
 
 // Set up camera
-camera.position.set(6, 3, 0);
-camera.lookAt(new Vector3(-2, 1.5, 0));
+camera.position.set(10, 1,5, 0);
+camera.lookAt(new Vector3(0, 0, 0));
 
 /* ------------------------------------------------------------------ */
 /*                                                                    */
