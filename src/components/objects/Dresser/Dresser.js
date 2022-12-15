@@ -33,19 +33,19 @@ class Dresser extends Group {
             gltf.scene.translateZ(1.5);
         });
 
-        loader.load(CLOSETMODEL, (gltf) => {
-            gltf.scene.traverse( function(object) {    
-                if ( object.isMesh ) {
-                    object.scale.set(0.2,0.2,0.2);
-                    object.material.dispose();
-                    object.material = new MeshPhongMaterial( { map: texture } );
-                }
-            } );
-            this.add(gltf.scene);
-            gltf.scene.rotateY(Math.PI);
-            gltf.scene.translateX(1.25);
-            gltf.scene.translateZ(-1.7);
-        });
+        // loader.load(CLOSETMODEL, (gltf) => {
+        //     gltf.scene.traverse( function(object) {    
+        //         if ( object.isMesh ) {
+        //             object.scale.set(0.2,0.2,0.2);
+        //             object.material.dispose();
+        //             object.material = new MeshPhongMaterial( { map: texture } );
+        //         }
+        //     } );
+        //     this.add(gltf.scene);
+        //     gltf.scene.rotateY(Math.PI);
+        //     gltf.scene.translateX(1.25);
+        //     gltf.scene.translateZ(-1.7);
+        // });
     }
 }
 

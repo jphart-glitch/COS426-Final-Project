@@ -34,6 +34,30 @@ export default class Player extends PerspectiveCamera {
         this.velocity = 0;
         // previous position used to readjust camera view dynamically
         this.prevPosition = new Vector3(0, 0, 0);
+        // previous hitbox for player
+        this.prevHitbox = new Box3(
+            new Vector3(this.position.x - 0.5, this.position.y - 1.5, this.position.z - 0.5),
+            new Vector3(this.position.x + 0.5, this.position.y + 0.5, this.position.z + 0.5),
+        );
+        // hitbox for player
+        this.hitbox = new Box3(
+            new Vector3(this.position.x - 0.5, this.position.y - 1.5, this.position.z - 0.5),
+            new Vector3(this.position.x + 0.5, this.position.y + 0.5, this.position.z + 0.5),
+        );
+    }
+
+    /* -------------------------------------------------------------- */
+    /*                                                                */
+    /* Hitbox update                                                  */
+    /*                                                                */
+    /* -------------------------------------------------------------- */
+
+    updateHitbox() {
+        this.prevHitbox = this.hitbox.clone();
+        this.hitbox = new Box3(
+            new Vector3(this.position.x - 0.2, this.position.y - 1.5, this.position.z - 0.2),
+            new Vector3(this.position.x + 0.2, this.position.y + 0.5, this.position.z + 0.2),
+        );
     }
 
     /* -------------------------------------------------------------- */
@@ -79,11 +103,26 @@ export default class Player extends PerspectiveCamera {
     /*                                                                */
     /* -------------------------------------------------------------- */
 
+    // Handles collisions between character and a plane geometry
+    handlePlaneCollision(plane) {
+
+        // Initialize plane position from object
+        let planeMesh = plane.mesh;
+        let planePosition = planeMesh.position;
+
+        // Can adjust as needed to reduce clipping
+        const EPS = 0.03;
+
+        if (this.position.y < planePosition.y + EPS) {
+            this.position.y = planePosition.y + EPS;
+        }
+    }
+
     // Handles collisions between character and an object's bounding box 
     handleBoxCollision(box) {
 
         // Can adjust as needed to reduce clipping
-        const EPS = 0.1;
+        const EPS = 0.03;
 
         // Can adjust as needed to account for friction - not considered much in the scope
         // of this implementation, but can be used in the future
@@ -97,8 +136,8 @@ export default class Player extends PerspectiveCamera {
         // then "push" character to nearest outside face
 
         // Check if inside box; if not, do nothing
-        let boundingBoxEPS = new Box3(box.clone().min.subScalar(EPS), box.clone().max.addScalar(EPS));
-        if (!boundingBoxEPS.containsPoint(this.position)) return;
+        let boundingBoxEPS = new Box3(box.min.subScalar(EPS), box.max.addScalar(EPS));
+        if (!boundingBoxEPS.intersectsBox(this.hitbox)) return;
         // If so, compute posNoFriction - projection of the particle’s current position to the nearest point on the box's nearest face
         let faces = new Array();
         posNoFriction = new Vector3(boundingBoxEPS.min.x, this.position.y, this.position.z);
@@ -113,7 +152,7 @@ export default class Player extends PerspectiveCamera {
             }
         }
         // If the particle was outside the box before, account for friction
-        if (!boundingBoxEPS.containsPoint(this.position)) {
+        if (!boundingBoxEPS.intersectsBox(this.prevHitbox)) {
             posFriction = this.prevPosition.clone().multiplyScalar(friction);
             posNoFriction.multiplyScalar(1.0 - friction);
             posFriction.add(posNoFriction);
@@ -127,6 +166,7 @@ export default class Player extends PerspectiveCamera {
             this.position.y = posNoFriction.y;
             this.position.z = posNoFriction.z;
         };
+        // this.position.y += 1.5;
     }
 
 }
