@@ -122,11 +122,74 @@ button.style.top = '55%';
 button.style.left = '45%';
 overlay.appendChild(button);
 
-const printtoconsole = function() {
-    controls.lock();
+let gameStarted = false;
+let gamePaused = false;
+let starttime;
+let remaining = 0;
+let timeouttask;
+let timelimit = 30*1000;
+
+// const date = new Date();
+
+const timerdiv = document.createElement('div');
+const timerbox = document.createElement('div');
+const timer = document.createElement('h2');
+timerdiv.appendChild(timerbox);
+timerbox.appendChild(timer);
+timer.appendChild(document.createTextNode('testing'));
+timerdiv.style.display = 'none';
+timerdiv.style.position = 'fixed';
+timerdiv.style.width = '100%';
+timerdiv.style.height = '100%';
+timerdiv.style.top = '0';
+timerdiv.style.left = '0';
+timerdiv.style.right = '0';
+timerdiv.style.bottom = '0';
+timerbox.style.position = 'absolute';
+timerbox.style.top = '10%';
+timerbox.style.left = '10%';
+timerbox.style.width = '12%';
+timerbox.style.height = '12%';
+timerbox.style.backgroundColor = 'rgba(255,161,54,0.5)';
+timerbox.style.textAlign = 'center';
+timerbox.style.borderRadius = '10px';
+document.body.appendChild(timerdiv);
+
+const updatetimer = function() {
+    if (!gamePaused) {
+        timer.removeChild(timer.firstChild);
+        let thisRemaining = Math.max(0, remaining - (Date.now() - starttime));
+        timer.appendChild(document.createTextNode('Time Left: ' + Math.floor(thisRemaining/100)/10 + 's'));
+    }
 };
 
-button.onclick = printtoconsole;
+const buttonclick = function() {
+    controls.lock();
+    if (gameStarted) {
+        timeouttask = window.setTimeout(endOfGame, remaining);
+    }
+    else {
+        timeouttask = window.setTimeout(endOfGame, timelimit);
+        starttime = Date.now();
+        console.log('starttime: ', starttime);
+        gameStarted = true;
+        remaining = timelimit;
+        console.log(remaining/1000);
+    }
+};
+
+button.onclick = buttonclick;
+
+const endOfGame = function() {
+    console.log("time's up!");
+    gameStarted = false;
+
+    controls.unlock();
+};
+
+const reloadGame = function() {
+    location.reload();
+}
 
 // Set up camera
 camera.position.set(10, 1,5, 0);
@@ -168,6 +231,8 @@ controls.addEventListener(
     'lock',
     function () {
 	    overlay.style.display = 'none';
+        timerdiv.style.display = 'block';
+        gamePaused = false;
         keyPressed["Escape"] = !keyPressed["Escape"];
     }
 );
@@ -177,7 +242,6 @@ controls.addEventListener(
     function () {
 	    overlay.style.display = 'block';
         button.removeChild(button.firstChild);
-        button.appendChild(document.createTextNode('Return to Game'));
         // If crouched, uncrouch upon exiting pause menu
         if (keyPressed["Shift"[2]]) camera.handleCrouch();
         // Switch all states off
@@ -189,6 +253,20 @@ controls.addEventListener(
         keyPressed["Shift"[2]] = false;
         keyPressed[" "] = false;
         keyPressed["Escape"] = !keyPressed["Escape"];
+
+        gamePaused = true;
+        if (gameStarted) {
+            window.clearTimeout(timeouttask);
+            remaining -= Date.now() - starttime;
+            starttime = Date.now();
+            console.log(remaining/1000);
+
+            button.appendChild(document.createTextNode('Return to Game'));
+        }
+        else {
+            button.appendChild(document.createTextNode('Play Again'));
+            button.onclick = reloadGame;
+        }
     }
 );
 
@@ -337,6 +415,7 @@ const onAnimationFrameHandler = (timeStamp) => {
     renderer.render(scene, camera);
     scene.update && scene.update(timeStamp);
     window.requestAnimationFrame(onAnimationFrameHandler);
+    updatetimer();
 };
 window.requestAnimationFrame(onAnimationFrameHandler);
 
