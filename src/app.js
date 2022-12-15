@@ -50,12 +50,12 @@ text.style.left = '50%';
 text.style.fontSize = '50px';
 text.style.color = 'white';
 text.style.transform = 'translate(-50%, -150%)'
-text.appendChild(document.createTextNode("Paused"));
+text.appendChild(document.createTextNode("Late to Class!")); //changed from Paused to Start
 overlay.appendChild(text);
 // If I could just do this, it would get rid of the ugly mess below
 // overlay.setAttribute('class', 'pause-menu');
 overlay.style.position = 'fixed';
-overlay.style.display = 'none';
+overlay.style.display = 'block';
 overlay.style.width = '100%';
 overlay.style.height = '100%';
 overlay.style.top = '0';
@@ -67,6 +67,22 @@ overlay.style.zIndex = '2';
 overlay.style.cursor = 'pointer';
 overlay.style.userSelect = 'none';
 document.body.appendChild(overlay);
+
+// Start menu
+// text.removeChild(text.firstChild);
+// console.log(text.firstChild);
+const button = document.createElement('button');
+button.appendChild(document.createTextNode('Start Here'))
+button.style.position = 'absolute';
+button.style.top = '55%';
+button.style.left = '45%';
+overlay.appendChild(button);
+
+const printtoconsole = function() {
+    controls.lock();
+};
+
+button.onclick = printtoconsole;
 
 // Set up camera
 camera.position.set(10, 1,5, 0);
@@ -102,9 +118,7 @@ var keyPressed = {
 // Initialize controls
 var controls = new PointerLockControls(camera, document.body);
 // When the document is clicked on, lock the pointer in a pseudo-fullscreen mode
-document.body.onclick = function() {
-    controls.lock();
-}
+
 // When the pointer is locked, get rid of the pause menu
 controls.addEventListener( 
     'lock',
@@ -118,6 +132,8 @@ controls.addEventListener(
     'unlock',
     function () {
 	    overlay.style.display = 'block';
+        button.removeChild(button.firstChild);
+        button.appendChild(document.createTextNode('Return to Game'));
         // If crouched, uncrouch upon exiting pause menu
         if (keyPressed["Shift"[2]]) camera.handleCrouch();
         // Switch all states off
