@@ -2,7 +2,7 @@ import { Group, TextureLoader, MeshPhysicalMaterial } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import LAUNDRY_BASKET from './laundry.gltf';
 require('./laundry.bin');
-require('./laundry_textures/material_0_baseColor.jpeg');
+require('./textures/material_0_baseColor.jpeg');
 import RUG from './rug.gltf';
 require('./rug.bin');
 const pngPath = require('./pattern.png');
