@@ -113,8 +113,6 @@ overlay.style.userSelect = 'none';
 document.body.appendChild(overlay);
 
 // Start menu
-// text.removeChild(text.firstChild);
-// console.log(text.firstChild);
 const button = document.createElement('button');
 button.appendChild(document.createTextNode('Start Here'))
 button.style.position = 'absolute';
@@ -192,7 +190,7 @@ const reloadGame = function() {
 }
 
 // Set up camera
-camera.position.set(10, 1,5, 0);
+camera.position.set(10, 1.5, 0);
 camera.lookAt(new Vector3(0, 0, 0));
 
 /* ------------------------------------------------------------------ */
@@ -356,6 +354,8 @@ function movePlayer() {
     // If game is paused, do nothing further
     if (keyPressed["Escape"]) return;
 
+    camera.prevPosition = camera.position.clone();
+
     // Scale to adjust lateral movement by
     let speed = 0.1;
 
@@ -388,6 +388,9 @@ function movePlayer() {
     if (keyPressed[" "] || camera.jumping) {
         camera.handleJump();
     }
+
+    // Update hitbox after all movement
+    camera.updateHitbox();
 }
 
 // Calls relevant handler function for any collisions
@@ -396,10 +399,33 @@ function handleCollisions() {
     // If game is paused, do nothing further
     if (keyPressed["Escape"]) return;
 
-    scene.traverse( function(obj) {
-        let box = new Box3().setFromObject(obj);
-        camera.handleBoxCollision(box);
+    scene.children.forEach(object => {
+        if (object.name == "room") {
+            
+        }
+        else {
+            childCollision(object);
+            // let box = new Box3().setFromObject(object);
+            // camera.handleBoxCollision(box);
+            // console.log(object);
+        }
     });
+
+    // Update hitbox after all movement
+    camera.updateHitbox();
+}
+
+// Recursively checks collision with all children
+function childCollision(object) {
+    if (object.children.length == 1) {
+        let box = new Box3().setFromObject(object);
+        camera.handleBoxCollision(box);
+    }
+    else {
+        object.children.forEach(child => {
+            childCollision(child);
+        });
+    }
 }
 
 /* ------------------------------------------------------------------ */

@@ -2,6 +2,7 @@ import * as Dat from 'dat.gui';
 import { Scene, Color, TetrahedronGeometry } from 'three';
 import { Flower, Land, Mattress } from 'objects';
 import { BasicLights } from 'lights';
+import { BoxHelper } from 'three/src/helpers/BoxHelper.js';
 import Box from '../objects/Box/Box';
 import { Decor, Desk, Dresser, Room, Rug } from '../objects';
 // import { Mattress } from '../objects/Mattress';
@@ -40,8 +41,10 @@ class DormScene extends Scene {
         this.add(desk);
         // const rug = new Rug();
         // this.add(rug);
-        const dresser = new Dresser();
-        this.add(dresser);
+        // const dresser = new Dresser();
+        // const boxHelper = new BoxHelper(dresser, 0xffff00);
+        // this.add(dresser);
+        // this.add(boxHelper);
         const decor = new Decor();
         this.add(decor);
 
