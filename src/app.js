@@ -296,6 +296,11 @@ function handleKeydown(event) {
     // If game is paused, do nothing further
     if (keyPressed["Escape"]) return;
 
+    // If e key (selection key) is pressed, check solution
+    if (event.key == "e") {
+        select();
+    }
+
     // If a movement key is pressed, switch state of that keyPressed value
     if (event.key == "w" || event.key == "a" || 
     event.key =="s" || event.key == "d") {
@@ -426,6 +431,56 @@ function childCollision(object) {
             childCollision(child);
         });
     }
+}
+
+/* ------------------------------------------------------------------ */
+/*                                                                    */
+/* Checking closest object                                            */
+/*                                                                    */
+/* ------------------------------------------------------------------ */
+
+// Checks all objects' hitboxes and picks closest one
+function select() {
+
+    let best_dist = Infinity;
+    let best_object;
+    scene.children.forEach(object => {
+        if (object.name == "room") {
+
+        }
+        else {
+            let challenger = childSelect(object);
+            if (best_dist > challenger.dist) {
+                best_dist = challenger.dist;
+                best_object = challenger.object;
+            }
+        }
+    })
+    console.log(best_dist);
+    console.log(best_object);
+}
+
+function childSelect(object) {
+
+    if (object.children.length == 1) {
+        let box = new Box3().setFromObject(object);
+        let target = new Vector3(0,0, -1);
+        target.applyQuaternion(camera.quaternion);
+        return {dist: camera.lookingAtObject(controls.getDirection(target), box), object: object};
+    }
+    else {
+        let best_dist = Infinity;
+        let best_object;
+        object.children.forEach(child => {
+            let challenger = childSelect(child);
+            if (best_dist > challenger.dist) {
+                best_dist = challenger.dist;
+                best_object = challenger.object;
+            }
+        });
+        return {dist: best_dist, object: best_object};
+    }
+
 }
 
 /* ------------------------------------------------------------------ */

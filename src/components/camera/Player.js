@@ -169,4 +169,99 @@ export default class Player extends PerspectiveCamera {
         // this.position.y += 1.5;
     }
 
+    /* -------------------------------------------------------------- */
+    /*                                                                */
+    /* Object selection handling functions                            */
+    /*                                                                */
+    /* -------------------------------------------------------------- */
+
+    // Chooses closer intersection distance among the two given
+    chooseCloserIntersection(len, best_dist) {
+        if (best_dist <= len) return best_dist;
+        return len;
+    }
+
+    // Intersects ray with plane; returns infinity if no intersection
+    // or the intersection and distance if there is one
+    findIntersectionWithPlane(origin, direction, planeNormal, dist) {
+        let a = direction.dot(planeNormal);
+        let b = origin.dot(planeNormal) - dist;
+
+        if (a == 0) {
+            return {intersect: new Vector3(Infinity, Infinity, Infinity), len: Infinity};
+        }
+
+        let len = -b / a;
+        if (len == 0) {
+            return {intersect: new Vector3(Infinity, Infinity, Infinity), len: Infinity};
+        }
+
+        let intersect = origin.clone().add(direction.clone().multiplyScalar(len));
+        let intersection = {intersect: intersect, len: len}
+        return intersection;
+    }
+
+    // Checks for intersection of ray and object hitbox; returns infinity
+    // if no intersection or the closest intersection if there is one
+    lookingAtObject(direction, box) {
+        // Set up base case for best_dist
+        let best_dist = Infinity;
+        // Initialize pmin and pmax
+        let pmin = box.min;
+        let pmax = box.max;
+        // Initialize all front-faces
+        let faces = new Array();
+        // Side with plane equation x = pmax.x
+        faces.push(new Vector3(pmax.x, pmin.y, pmin.z));
+        // Side with plane equation y = pmax.y
+        faces.push(new Vector3(pmin.x, pmax.y, pmin.z));
+        // Side with plane equation z = pmax.z
+        faces.push(new Vector3(pmin.x, pmin.y, pmax.z));
+        
+        // Loop through all front-facing faces
+        for (let i = 0; i < faces.length; i++) {
+            // Initialize points on current face
+            let p = faces[i];
+            // Calculate plane normal and distance from ray origin to plane
+            let planeNormal = p.clone().sub(pmin).normalize();
+            let d = planeNormal.dot(p);
+            // Find intersection
+            let intersection = this.findIntersectionWithPlane(this.position, direction, planeNormal, d);
+            let intersect = intersection.intersect;
+            let len = intersection.len;
+            // If the intersection is inside the rectangle, update the value of best_dist and best_intersect as needed
+            if (box.containsPoint(intersect)) {
+                best_dist = this.chooseCloserIntersection(len, best_dist);
+            }
+        }
+
+        // Initialize all back-faces
+        faces = new Array();
+        // Side with plane equation x = pmin.x
+        faces.push(new Vector3(pmin.x, pmax.y, pmax.z));
+        // Side with plane equation y = pmin.y
+        faces.push(new Vector3(pmax.x, pmin.y, pmax.z));
+        // Side with plane equation z = pmin.z
+        faces.push(new Vector3(pmax.x, pmax.y, pmin.z));
+        
+        // Loop through all front-facing faces
+        for (let i = 0; i < faces.length; i++) {
+            // Initialize points on current face
+            let p = faces[i];
+            // Calculate plane normal and distance from ray origin to plane
+            let planeNormal = p.clone().sub(pmax).normalize();
+            let d = planeNormal.dot(p);
+            // Find intersection
+            let intersection = this.findIntersectionWithPlane(this.position, direction, planeNormal, d);
+            let intersect = intersection.intersect;
+            let len = intersection.len;
+            // If the intersection is inside the rectangle, update the value of best_dist and best_intersect as needed
+            if (box.containsPoint(intersect)) {
+                best_dist = this.chooseCloserIntersection(len, best_dist);
+            }
+        }
+        // Return closest intersection distance or INFINITY if none exist
+        return best_dist;
+    }
+
 }
