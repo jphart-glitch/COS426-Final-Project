@@ -190,6 +190,7 @@ const updatetimer = function() {
 const buttonclick = function() {
     controls.lock();
     if (gameStarted) {
+        console.log(remaining);
         timeouttask = window.setTimeout(endOfGame, remaining);
         sound.play();
     }
@@ -323,12 +324,13 @@ controls.addEventListener(
         keyPressed[" "] = false;
         keyPressed["Escape"] = !keyPressed["Escape"];
 
-        gamePaused = true;
+        
         sound.pause();
         if (gameStarted) {
             window.clearTimeout(timeouttask);
-            remaining -= Date.now() - starttime;
-            starttime = Date.now();
+            let now = Date.now();
+            remaining -= now - starttime;
+            starttime = now;
             console.log(remaining/1000);
 
             button.appendChild(document.createTextNode('Return to Game'));
@@ -337,6 +339,7 @@ controls.addEventListener(
             button.appendChild(document.createTextNode('Play Again'));
             button.onclick = reloadGame;
         }
+        gamePaused = true;
     }
 );
 
