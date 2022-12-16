@@ -182,7 +182,10 @@ img.style.borderRadius = '5px';
 const updatetimer = function() {
     if (!gamePaused) {
         timer.removeChild(timer.firstChild);
+        // console.log(remaining);
+        console.log(starttime);
         let thisRemaining = Math.max(0, remaining - (Date.now() - starttime));
+        // console.log('this', thisRemaining);
         timer.appendChild(document.createTextNode('Time Left: ' + Math.floor(thisRemaining/100)/10 + 's'));
     }
 };
