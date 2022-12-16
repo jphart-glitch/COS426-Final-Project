@@ -183,8 +183,9 @@ const updatetimer = function() {
     if (!gamePaused) {
         timer.removeChild(timer.firstChild);
         // console.log(remaining);
-        console.log(starttime);
+        // console.log(starttime);
         let thisRemaining = Math.max(0, remaining - (Date.now() - starttime));
+        // let thisRemaining = Math.max(0, remaining);
         // console.log('this', thisRemaining);
         timer.appendChild(document.createTextNode('Time Left: ' + Math.floor(thisRemaining/100)/10 + 's'));
     }
@@ -193,18 +194,19 @@ const updatetimer = function() {
 const buttonclick = function() {
     controls.lock();
     if (gameStarted) {
-        console.log(remaining);
+        // console.log('play: ', remaining/1000);
+        starttime = Date.now();
         timeouttask = window.setTimeout(endOfGame, remaining);
         sound.play();
     }
     else {
         timeouttask = window.setTimeout(endOfGame, timelimit);
         starttime = Date.now();
-        console.log('starttime: ', starttime);
+        // console.log('starttime: ', starttime);
         gameStarted = true;
         camera.position.set(2.30, 1.5, 0.3);
         remaining = timelimit;
-        console.log(remaining/1000);
+        // console.log('play: ', remaining/1000);
         sound.play();
     }
 };
@@ -333,8 +335,8 @@ controls.addEventListener(
             window.clearTimeout(timeouttask);
             let now = Date.now();
             remaining -= now - starttime;
-            starttime = now;
-            console.log(remaining/1000);
+            // starttime = now;
+            // console.log('pause: ', remaining/1000);
 
             button.appendChild(document.createTextNode('Return to Game'));
         }
