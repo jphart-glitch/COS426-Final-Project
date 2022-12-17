@@ -39,11 +39,11 @@ class Room extends Group {
         wall3.geometry.translate(-2, 1.5, 0);
         wall4.geometry.translate(3, 1.5, 0);
 
-        const g = new SphereGeometry(0.05);
-        const m = new MeshPhongMaterial( { color: 0x000000 } );
-        const center = new Mesh(g, m);
+        // const g = new SphereGeometry(0.05);
+        // const m = new MeshPhongMaterial( { color: 0x000000 } );
+        // const center = new Mesh(g, m);
 
-        this.add(center);
+        // this.add(center);
     }
 
 

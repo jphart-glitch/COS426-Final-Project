@@ -69,7 +69,7 @@ manager.onLoad = function() {
 
 // Load scene
 const loader = new OBJLoader(manager);
-loader.load("./components/scenes/DormScene.js", function(object) {
+loader.load("/assets", function(object) {
 });
 
 // Initialize core ThreeJS components
@@ -168,7 +168,7 @@ objectbox.style.backgroundColor = 'rgba(255,161,54,0.5)';
 objectbox.style.textAlign = 'center';
 objectbox.style.borderRadius = '10px';
 const objecttext = document.createElement('h3');
-objecttext.appendChild(document.createTextNode('Find this object:'));
+objecttext.appendChild(document.createTextNode('Find this object and press \'E\' to select it:'));
 objectbox.appendChild(objecttext);
 const img = document.createElement('img');
 img.src = imgPath;
@@ -182,7 +182,11 @@ img.style.borderRadius = '5px';
 const updatetimer = function() {
     if (!gamePaused) {
         timer.removeChild(timer.firstChild);
+        // console.log(remaining);
+        // console.log(starttime);
         let thisRemaining = Math.max(0, remaining - (Date.now() - starttime));
+        // let thisRemaining = Math.max(0, remaining);
+        // console.log('this', thisRemaining);
         timer.appendChild(document.createTextNode('Time Left: ' + Math.floor(thisRemaining/100)/10 + 's'));
     }
 };
@@ -190,17 +194,19 @@ const updatetimer = function() {
 const buttonclick = function() {
     controls.lock();
     if (gameStarted) {
+        // console.log('play: ', remaining/1000);
+        starttime = Date.now();
         timeouttask = window.setTimeout(endOfGame, remaining);
         sound.play();
     }
     else {
         timeouttask = window.setTimeout(endOfGame, timelimit);
         starttime = Date.now();
-        console.log('starttime: ', starttime);
+        // console.log('starttime: ', starttime);
         gameStarted = true;
         camera.position.set(2.30, 1.5, 0.3);
         remaining = timelimit;
-        console.log(remaining/1000);
+        // console.log('play: ', remaining/1000);
         sound.play();
     }
 };
@@ -323,13 +329,14 @@ controls.addEventListener(
         keyPressed[" "] = false;
         keyPressed["Escape"] = !keyPressed["Escape"];
 
-        gamePaused = true;
+        
         sound.pause();
         if (gameStarted) {
             window.clearTimeout(timeouttask);
-            remaining -= Date.now() - starttime;
-            starttime = Date.now();
-            console.log(remaining/1000);
+            let now = Date.now();
+            remaining -= now - starttime;
+            // starttime = now;
+            // console.log('pause: ', remaining/1000);
 
             button.appendChild(document.createTextNode('Return to Game'));
         }
@@ -337,6 +344,7 @@ controls.addEventListener(
             button.appendChild(document.createTextNode('Play Again'));
             button.onclick = reloadGame;
         }
+        gamePaused = true;
     }
 );
 
@@ -434,7 +442,7 @@ function movePlayer() {
     camera.prevPosition = camera.position.clone();
 
     // Scale to adjust lateral movement by
-    let speed = 0.1;
+    let speed = 0.025;
 
     // If left shift (sprint key) is held down, increase speed
     if (keyPressed["Shift"["1"]]) {
