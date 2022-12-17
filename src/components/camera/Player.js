@@ -11,7 +11,7 @@
 /*                                                                    */
 /* ------------------------------------------------------------------ */
 
-import { PerspectiveCamera, Vector3, Box3 } from 'three';
+import { PerspectiveCamera, Vector3, Box3, Camera } from 'three';
 
 export default class Player extends PerspectiveCamera {
 
@@ -103,21 +103,6 @@ export default class Player extends PerspectiveCamera {
     /*                                                                */
     /* -------------------------------------------------------------- */
 
-    // Handles collisions between character and a plane geometry
-    handlePlaneCollision(plane) {
-
-        // Initialize plane position from object
-        let planeMesh = plane.mesh;
-        let planePosition = planeMesh.position;
-
-        // Can adjust as needed to reduce clipping
-        const EPS = 0.03;
-
-        if (this.position.y < planePosition.y + EPS) {
-            this.position.y = planePosition.y + EPS;
-        }
-    }
-
     // Handles collisions between character and an object's bounding box 
     handleBoxCollision(box) {
 
@@ -166,9 +151,10 @@ export default class Player extends PerspectiveCamera {
             this.position.y = posNoFriction.y;
             this.position.z = posNoFriction.z;
         };
-        // this.position.y += 1.5;
+        this.updateHitbox();
     }
 
+    // Handles collisions with room boundary
     handleRoomBoundary(box) {
         // Can adjust as needed to reduce clipping
         const EPS = 0.05;
